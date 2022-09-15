@@ -4,8 +4,14 @@ let numColumns = 16;
 let numRows = 16;
 
 //adds a button for grid dimension selection 
-let btn1= document.createElement('button'); 
+let btn1 = document.createElement('button'); 
+btn1.textContent = "Size"
 bigContain.appendChild(btn1);
+
+//adds a button to clear grid 
+let btn2 = document.createElement('button');
+btn2.textContent = "Clear";
+bigContain.appendChild(btn2);
 
 //When button is clicked, new grid formed 
 btn1.addEventListener('click', () => {  
@@ -17,6 +23,14 @@ btn1.addEventListener('click', () => {
     dimensOfGrid(sides); 
     createGrid()
     etchFunc();
+})
+
+btn2.addEventListener('click', () => { //clear grid after 'clear' button is clicked 
+    let unitG = document.querySelectorAll('.unitGrid');
+    let unitGArr = Array.from(unitG);
+    unitGArr.forEach(grid => {
+            grid.style.backgroundColor = 'transparent'
+    })
 })
 
 //checks if input number of grids is valid

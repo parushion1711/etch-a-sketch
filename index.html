@@ -9,8 +9,80 @@
 </head>
 <body>
     <div id="main">
-        <div id="grid"></div>
+        <buttons @clear="clearGrid" @resize="resize"></buttons>
+        <div id="grid" @mousedown="mouseDown = true" @mouseup="mouseDown = false">
+           <div v-for='i in this.size' 
+                style="display: flex; width: 100% " 
+                :style="{height: `${1/this.size*100}%`, 'border-top': i === 1 ? '1px solid black' : ''}"> 
+                    <div v-for="j in this.size" 
+                        @mouseover="mouseTruer(i,j)"
+                        style="border-bottom: 1px solid black; border-right: 1px solid black; height: 100%; width: 100%;"
+                        :style="{ 'border-left': j === 1 ? '1px solid black' : '', 
+                                'background-color': this.mouseOverArray[this.getIndex(i,j)] 
+                                ? 'black' : ''}"> 
+                    </div>
+            </div>
+        </div>
+        
     </div>
 </body>
-<script src="etch.js"></script>
+<script src="https://unpkg.com/vue@next"></script>
+<script>
+    let app = Vue.createApp({
+        data: function() {
+            return {
+                mouseDown: false,
+                mouseOverArray: [],
+                size: 16 
+            }
+        },
+        methods: {
+            getIndex(row, column) {
+                row -= 1 //adjusts for index in Vue
+                column -= 1
+                return row * this.size + column 
+            },
+            mouseTruer(row, column) {
+                const index = this.getIndex(row, column)
+                if (this.mouseDown) {
+                    this.mouseOverArray[index] = true 
+                } 
+            },
+            clearGrid() {
+                for(i = 0; i < this.mouseOverArray.length; i ++) {
+                    this.mouseOverArray[i] = false
+                }
+            },
+            resize() {
+                let size = Number(prompt("Enter a number between 16 - 100", 16)) 
+                if (size < 16 || size > 100 || Number.isNaN(size)) {
+                    alert("Number is invalid, a default of 16x16 grid is created!")
+                    size =  16
+                }
+                this.clearGrid()
+                this.size = size
+            }
+        }
+    })
+    app.component("buttons", {
+        template: `
+            <button class="btn" @click="clearGrid">Clear</button>
+            <button class='btn' @click="resizeTool">Size</button>
+        `,
+        data() {
+            return {
+    
+            }
+        },
+        methods: {
+            clearGrid() {
+                this.$emit('clear')
+            },
+            resizeTool() {
+                this.$emit('resize')
+            },
+        }
+    }),
+    app.mount('#main')
+</script>
 </html>
